@@ -1,0 +1,19 @@
+{% for car in cars %}
+<div class="row pt-3">
+	{% for car in cars %}
+	<div class="col-3">
+		<div class="card">
+	  <!-- <img src="..." class="card-img-top" alt="..."> -->
+	  <div class="card-body">
+	    <h5 class="card-title">Color: {{ car.get_color_display }}</h5>
+	    <p class="card-text">Car id: {{ car.pk }}</p>
+	    <p class="card-text">Car order: {{ car.order }}</p>
+	    <button type="button" class="btn btn-{% if car.color == 'blue' %}primary{% else %}danger{% endif %}" data-toggle="modal" data-target="#moveModal" data-url='{% url "car:move_cars" car.pk %}'>
+		  Move
+		</button>
+	  </div>
+	</div>
+	</div>
+	{% endfor %}
+</div>
+{% endfor %}
