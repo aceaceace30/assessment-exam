@@ -21,23 +21,7 @@
   		</form>
   		
   		<div class="div_cars">
-	  		<div class="row pt-3">
-	  			{% for car in cars %}
-	  			<div class="col-3">
-	  				<div class="card">
-					  <!-- <img src="..." class="card-img-top" alt="..."> -->
-					  <div class="card-body">
-					    <h5 class="card-title">Color: {{ car.get_color_display }}</h5>
-					    <p class="card-text">Car id: {{ car.pk }}</p>
-					    <p class="card-text">Car order: {{ car.order }}</p>
-					    <button type="button" class="btn btn-{% if car.color == 'blue' %}primary{% else %}danger{% endif %}" data-toggle="modal" data-target="#moveModal" data-url='/car/move_cars/{{ car.pk }}/'>
-						  Move
-						</button>
-					  </div>
-					</div>
-	  			</div>
-	  			{% endfor %}
-	  		</div>
+        {% include 'car/ajax_cars.html' %}
   		</div>
   		
   	</div>
@@ -45,21 +29,24 @@
   	<!-- Modal -->
 	<div class="modal fade" id="moveModal" tabindex="-1" role="dialog" aria-labelledby="moveModalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title" id="moveModalLabel">Select a car you want to swap with:</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body">
-	        {{ car_select.as_p }}
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary" id="moveBtn">Save changes</button>
-	      </div>
-	    </div>
+      <form method="POST" id="carMoveForm">
+        {% csrf_token %}
+  	    <div class="modal-content">
+  	      <div class="modal-header">
+  	        <h5 class="modal-title" id="moveModalLabel">Move Car:</h5>
+  	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  	          <span aria-hidden="true">&times;</span>
+  	        </button>
+  	      </div>
+  	      <div class="modal-body">
+  	        {{ car_select.as_p }}
+  	      </div>
+  	      <div class="modal-footer">
+  	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+  	        <button type="submit" class="btn btn-primary">Save changes</button>
+  	      </div>
+  	    </div>
+      </form>
 	  </div>
 	</div>
 
@@ -81,22 +68,25 @@
 	    	});
 
     		
-    		$('#moveBtn').click(function(e){
+    		$('#carMoveForm').on('submit', function(e){
 
-    			let car_id = $('#id_car').val();
+            e.preventDefault();
 
-    			$.ajax({
-    				method: 'POST',
-    				url: url,
-    				data: {csrfmiddlewaretoken: '{{ csrf_token }}',
-    					   'car_id': car_id,},
-    				success:function(data){
-    					alert(data);
-    					$('.div_cars').html(data);
-    					$('#moveModal').modal('hide');
-    				}
-    			})
-    		})
+            let form = $(this);
+
+            $.ajax({
+              method: form.attr('method'),
+              url: url,
+              data: form.serialize(),
+              success:function(data){
+                console.log(data);
+                $('.div_cars').html(data);
+                $('#moveModal').modal('hide');
+              }
+            })
+
+        });
+
     	});
     </script>
   </body>

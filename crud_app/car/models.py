@@ -14,4 +14,4 @@ class Car(models.Model):
 		ordering = ['-order']
 
 	def __str__(self):
-		return '%s | %s' % (str(self.pk), self.color)
+		return 'Car-00%s' % (str(self.pk))

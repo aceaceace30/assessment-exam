@@ -15,9 +15,15 @@ class CarSearchForm(forms.Form):
 
 class CarForm(forms.Form):
 
+	POSITION_CHOICES = (
+		('before', 'Before'),
+		('after', 'After'),
+		)
+
 	def __init__(self, *args, **kwargs):
 		super(CarForm, self).__init__(*args, **kwargs)
 		for myField in self.fields:
 			self.fields[myField].widget.attrs['class'] = 'form-control form-control-md'
 
+	position = forms.ChoiceField(choices=POSITION_CHOICES)
 	car = forms.ModelChoiceField(queryset=Car.objects.all().order_by('-pk'))
